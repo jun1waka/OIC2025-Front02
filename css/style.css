@@ -1,0 +1,4 @@
+/* style.cssは空のままでも動作します */
+td {
+    cursor: pointer;
+}
