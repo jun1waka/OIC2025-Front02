@@ -11,6 +11,8 @@ let count = 0;
 let help_count = 3;
 // 1枚目にめくったカードのIDを保存するための変数。-1は、まだ何もめくられていない状態を表します。
 let firstid = -1;
+// 2枚目をめくった状態を保存する変数。
+let isTwoCardsOpen = false;
 
 // --- カードの初期化 ---
 // 4種類の模様と13個の数字を組み合わせて、52枚のカードオブジェクトを作成し、`cards`配列に入れます。
@@ -89,7 +91,9 @@ for (let i = 0; i < card_type.length; i++) { // 行のループ (4回)
       let clicked_id = this.id; // クリックされたカードのIDを取得
       
       // もし既にペアが成立しているカードなら、何もしないで処理を終了
-      if (cards[clicked_id].ispair || clicked_id == firstid) {
+      if (cards[clicked_id].ispair || 
+          clicked_id == firstid    ||
+          isTwoCardsOpen) {
         return;
       }
       
@@ -102,11 +106,13 @@ for (let i = 0; i < card_type.length; i++) { // 行のループ (4回)
         firstid = clicked_id;
       } else {
         // 【2枚目のカードをめくった時の処理】
+        isTwoCardsOpen = true;
         if (checkPair(firstid, clicked_id)) {
           // ** ペアだった時の処理 **
           message.innerHTML = 'ペアができた';
           cards[firstid].ispair = true;
           cards[clicked_id].ispair = true;
+          isTwoCardsOpen = false;
         } else {
           // ** ペアではなかった時の処理 **
           message.innerHTML = 'ペアじゃない';
@@ -116,6 +122,7 @@ for (let i = 0; i < card_type.length; i++) { // 行のループ (4回)
             flip(wk_firstid);
             flip(clicked_id);
             message.innerHTML = '　'; // メッセージを消す
+            isTwoCardsOpen = false;
           }, 1000);
         }
         // 次のペア探しの為に、firstidをリセットする
